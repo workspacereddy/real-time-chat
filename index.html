@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chat</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .chat-container { max-width: 600px; margin: 50px auto; border: 1px solid #ccc; padding: 20px; }
+    .messages { height: 300px; overflow-y: scroll; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    input[type="text"] { width: 80%; padding: 10px; margin-right: 10px; }
+    button { padding: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="messages" id="messages"></div>
+    <input type="text" id="message" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    // Listen for incoming messages
+    socket.on('chat message', (msg) => {
+      const messagesDiv = document.getElementById('messages');
+      const messageElement = document.createElement('div');
+      messageElement.textContent = msg;
+      messagesDiv.appendChild(messageElement);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // auto scroll to the bottom
+    });
+
+    // Send message
+    function sendMessage() {
+      const messageInput = document.getElementById('message');
+      const guestName = prompt('Enter your name:'); // Prompt for guest name
+      const message = messageInput.value;
+      socket.emit('chat message', `${guestName}: ${message}`);
+      messageInput.value = ''; // Clear input field
+    }
+  </script>
+</body>
+</html>
